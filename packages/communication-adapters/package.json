@@ -1,0 +1,16 @@
+{
+  "name": "@realtime-thesis/communication-adapters",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "simple-peer": "^9.11.1"
+  },
+  "devDependencies": {
+    "@types/simple-peer": "^9.11.5",
+    "typescript": "^5.3.3"
+  }
+}

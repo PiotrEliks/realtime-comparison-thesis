@@ -1,0 +1,26 @@
+{
+  "name": "realtime-comparison-thesis",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "servers/*",
+    "benchmarks"
+  ],
+  "scripts": {
+    "dev:all": "concurrently \"npm run dev:servers\" \"npm run dev:apps\"",
+    "dev:servers": "concurrently \"npm run dev -w websocket-server\" \"npm run dev -w sse-server\" \"npm run dev -w longpolling-server\" \"npm run dev -w webrtc-signaling-server\"",
+    "dev:apps": "concurrently \"npm run dev -w kanban-websocket\" \"npm run dev -w chat-websocket\" \"npm run dev -w dashboard-websocket\"",
+    "dev:kanban": "concurrently \"npm run dev -w kanban-websocket\" \"npm run dev -w kanban-sse\" \"npm run dev -w kanban-longpolling\" \"npm run dev -w kanban-webrtc\"",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "benchmark": "npm run benchmark -w benchmarks",
+    "clean": "rm -rf node_modules packages/*/node_modules apps/*/node_modules servers/*/node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.6"
+  }
+}
