@@ -47,7 +47,3 @@ npm run dev -w kanban-websocket
 ```bash
 npm run benchmark
 ```
-
-## Autor
-
-[Twoje Imię] - Praca magisterska 2025
