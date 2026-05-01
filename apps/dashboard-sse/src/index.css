@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Price flash animations (StocksTab) */
+@keyframes priceUp   { 0%,100%{background:transparent} 25%{background:rgba(52,211,153,0.18)} }
+@keyframes priceDown { 0%,100%{background:transparent} 25%{background:rgba(248,113,113,0.18)} }
+.price-up   { animation: priceUp   0.55s ease; }
+.price-down { animation: priceDown 0.55s ease; }
+
+/* NumberFlash component */
+@keyframes nfUp   { 0%,100%{color:inherit} 30%{color:#34d399} }
+@keyframes nfDown { 0%,100%{color:inherit} 30%{color:#f87171} }
+.nf-up   { animation: nfUp   0.5s ease; }
+.nf-down { animation: nfDown 0.5s ease; }
+
+/* Thin scrollbar */
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }

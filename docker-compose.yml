@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # ============================================================
+  # PostgreSQL - JEDNA instancja dla WSZYSTKICH aplikacji
+  # ============================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: realtime-thesis-db
+    environment:
+      POSTGRES_USER: thesis_user
+      POSTGRES_PASSWORD: thesis_password
+      POSTGRES_DB: realtime_chat  # Główna baza (chat), reszta w init.sql
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U thesis_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - realtime-network
+
+  # ============================================================
+  # Redis - dla cache i sessions (opcjonalnie)
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: realtime-thesis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - realtime-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  realtime-network:
+    driver: bridge

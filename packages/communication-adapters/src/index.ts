@@ -1,8 +1,5 @@
-// Adapters
-export { WebSocketAdapter } from './adapters/WebSocketAdapter';
-export { SSEAdapter } from './adapters/SSEAdapter';
-export { LongPollingAdapter } from './adapters/LongPollingAdapter';
-export { WebRTCAdapter } from './adapters/WebRTCAdapter';
-
-// Types
-export type { CommunicationAdapter, Message, ConnectionStatus } from './types/Adapter';
+export { useWebSocketAdapter } from './dashboard/useWebSocketAdapter';
+export { useSSEAdapter }       from './dashboard/useSSEAdapter';
+export { useLongPollingAdapter } from './dashboard/useLongPollingAdapter';
+export { useWebSocketKanbanAdapter } from './kanban/useWebSocketKanbanAdapter';
+export { useSSEKanbanAdapter } from './kanban/useSSEKanbanAdapter';
