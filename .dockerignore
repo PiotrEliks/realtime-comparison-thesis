@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.gitignore
+benchmarks/results
+docs/results
+*.log
+*.pcap
+.env
+.env.*
+

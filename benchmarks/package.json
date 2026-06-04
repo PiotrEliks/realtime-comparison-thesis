@@ -1,0 +1,31 @@
+{
+  "name": "benchmarks",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "benchmark": "node ./scenarios/kanban-benchmark.js",
+    "benchmark:kanban": "node ./scenarios/kanban-benchmark.js",
+    "benchmark:chat": "node ./scenarios/chat-benchmark.js",
+    "benchmark:dashboard": "node ./scenarios/dashboard-benchmark.js",
+    "benchmark:whiteboard": "node ./scenarios/whiteboard-benchmark.js",
+    "suite:kanban": "node ./scripts/run-kanban-test.js",
+    "suite:chat": "node ./scripts/run-chat-test.js",
+    "suite:dashboard": "node ./scripts/run-dashboard-test.js",
+    "suite:whiteboard": "node ./scripts/run-whiteboard-test.js",
+    "matrix": "node ./scripts/run-matrix.js",
+    "matrix:all": "node ./scripts/run-matrix.js --app all",
+    "matrix:kanban": "node ./scripts/run-matrix.js --app kanban",
+    "matrix:chat": "node ./scripts/run-matrix.js --app chat",
+    "matrix:dashboard": "node ./scripts/run-matrix.js --app dashboard",
+    "matrix:whiteboard": "node ./scripts/run-matrix.js --app whiteboard",
+    "seed:kanban": "node ./scenarios/kanban-benchmark.js --seed-only",
+    "docker:shell": "docker compose -f ../docker-compose.benchmark.yml exec benchmark-runner bash"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "pg": "^8.11.3",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {}
+}

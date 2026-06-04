@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
+import jwt, { type SignOptions } from 'jsonwebtoken';
 import { User } from '../../models/kanban';
 
 const JWT_SECRET  = process.env.JWT_SECRET || 'kanban-secret-key';
-const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_EXPIRES = (process.env.JWT_EXPIRES_IN || '7d') as SignOptions['expiresIn'];
 
 export class AuthService {
   generateToken(userId: string): string {

@@ -34,7 +34,7 @@ export const Sparkline = memo(({
         {showTooltip && (
           <Tooltip
             contentStyle={{ background: '#0d1420', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, fontSize: 11 }}
-            formatter={(v: number) => [`${v}${unit}`]}
+            formatter={(v: number | undefined) => [`${v ?? 0}${unit}`]}
             labelFormatter={() => ''}
           />
         )}

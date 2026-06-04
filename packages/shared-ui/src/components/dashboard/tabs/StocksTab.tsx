@@ -88,7 +88,7 @@ export function StocksTab({ history, snap }: Props) {
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
               <Tooltip
                 contentStyle={{ background: '#0d1420', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, fontSize: 11 }}
-                formatter={(v: number) => [`${v.toFixed(3)}%`]}
+                formatter={(v: number | undefined) => [`${(v ?? 0).toFixed(3)}%`]}
                 labelFormatter={() => ''}
               />
               <Legend wrapperStyle={{ fontSize: 10, paddingTop: 8 }}

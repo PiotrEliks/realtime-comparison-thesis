@@ -123,7 +123,7 @@ export function AppTab({ history, snap }: Props) {
                 <ReferenceLine y={200} stroke="#f87171" strokeDasharray="3 3" strokeWidth={1} />
                 <Tooltip
                   contentStyle={{ background: '#0d1420', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, fontSize: 10 }}
-                  formatter={(v: number) => [v, 'queue']}
+                  formatter={(v: number | undefined) => [v ?? 0, 'queue']}
                   labelFormatter={() => ''}
                 />
                 <Area type="monotone" dataKey="v" stroke="#fbbf24" fill="url(#gq-app)"

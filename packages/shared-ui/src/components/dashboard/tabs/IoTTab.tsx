@@ -82,7 +82,7 @@ export function IoTTab({ history, snap }: Props) {
               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9, fill: '#475569' }} width={28} />
               <Tooltip
                 contentStyle={{ background: '#0d1420', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, fontSize: 10 }}
-                formatter={(v: number) => [`${v.toFixed(1)}°C`]}
+                formatter={(v: number | undefined) => [`${(v ?? 0).toFixed(1)}°C`]}
                 labelFormatter={() => ''}
               />
               {iot.slice(0, 6).map((s, i) => (

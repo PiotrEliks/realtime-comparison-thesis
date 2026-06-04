@@ -1,0 +1,337 @@
+x-server-common: &server-common
+  build:
+    context: .
+    dockerfile: docker/node-benchmark.Dockerfile
+  environment: &server-env
+    NODE_ENV: production
+    DB_HOST: postgres
+    DB_PORT: "5432"
+    DB_USER: thesis_user
+    DB_PASSWORD: thesis_password
+    DB_NAME: realtime_chat
+    KANBAN_DB: realtime_kanban
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+  networks:
+    - benchmark-network
+  restart: "no"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: realtime-benchmark-db
+    environment:
+      POSTGRES_USER: thesis_user
+      POSTGRES_PASSWORD: thesis_password
+      POSTGRES_DB: realtime_chat
+    ports:
+      - "5432:5432"
+    volumes:
+      - benchmark_postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U thesis_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - benchmark-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: realtime-benchmark-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - benchmark_redis_data:/data
+    networks:
+      - benchmark-network
+
+  websocket-kanban-server:
+    <<: *server-common
+    profiles: ["kanban-ws"]
+    container_name: benchmark-websocket-kanban-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: websocket-kanban-server
+    ports:
+      - "4010:4010"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4010/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  sse-kanban-server:
+    <<: *server-common
+    profiles: ["kanban-sse"]
+    container_name: benchmark-sse-kanban-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: sse-kanban-server
+    ports:
+      - "4011:4011"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4011/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  longpolling-kanban-server:
+    <<: *server-common
+    profiles: ["kanban-lp"]
+    container_name: benchmark-longpolling-kanban-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: longpolling-kanban-server
+      PORT: "4012"
+    ports:
+      - "4012:4012"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4012/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  websocket-chat-server:
+    <<: *server-common
+    profiles: ["chat-ws"]
+    container_name: benchmark-websocket-chat-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: websocket-chat-server
+      PORT: "4001"
+    ports:
+      - "4001:4001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4001/api/health || curl -fsS http://localhost:4001/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  sse-chat-server:
+    <<: *server-common
+    profiles: ["chat-sse"]
+    container_name: benchmark-sse-chat-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: sse-chat-server
+      PORT: "4002"
+    ports:
+      - "4002:4002"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4002/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  longpolling-chat-server:
+    <<: *server-common
+    profiles: ["chat-lp"]
+    container_name: benchmark-longpolling-chat-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: longpolling-chat-server
+      PORT: "4003"
+    ports:
+      - "4003:4003"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4003/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  websocket-dashboard-server:
+    <<: *server-common
+    profiles: ["dashboard-ws"]
+    container_name: benchmark-websocket-dashboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: websocket-dashboard-server
+    ports:
+      - "4005:4005"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4005/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  sse-dashboard-server:
+    <<: *server-common
+    profiles: ["dashboard-sse"]
+    container_name: benchmark-sse-dashboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: sse-dashboard-server
+    ports:
+      - "4006:4006"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4006/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  longpolling-dashboard-server:
+    <<: *server-common
+    profiles: ["dashboard-lp"]
+    container_name: benchmark-longpolling-dashboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: longpolling-dashboard-server
+    ports:
+      - "4007:4007"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4007/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  websocket-whiteboard-server:
+    <<: *server-common
+    profiles: ["whiteboard-ws"]
+    container_name: benchmark-websocket-whiteboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: websocket-whiteboard-server
+      DB_NAME: realtime_whiteboard
+      WHITEBOARD_DB: realtime_whiteboard
+      PORT: "5001"
+      WS_PORT: "5002"
+    ports:
+      - "5001:5001"
+      - "5002:5002"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5001/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  sse-whiteboard-server:
+    <<: *server-common
+    profiles: ["whiteboard-sse"]
+    container_name: benchmark-sse-whiteboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: sse-whiteboard-server
+      DB_NAME: realtime_whiteboard
+      WHITEBOARD_DB: realtime_whiteboard
+      PORT: "5003"
+    ports:
+      - "5003:5003"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5003/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  longpolling-whiteboard-server:
+    <<: *server-common
+    profiles: ["whiteboard-lp"]
+    container_name: benchmark-longpolling-whiteboard-server
+    environment:
+      <<: *server-env
+      SERVER_WORKSPACE: longpolling-whiteboard-server
+      DB_NAME: realtime_whiteboard
+      WHITEBOARD_DB: realtime_whiteboard
+      PORT: "5004"
+    ports:
+      - "5004:5004"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5004/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  benchmark-runner:
+    build:
+      context: .
+      dockerfile: docker/node-benchmark.Dockerfile
+    profiles: ["runner"]
+    container_name: benchmark-runner
+    environment:
+      <<: *server-env
+      TARGET_BASE_URL: http://websocket-kanban-server:4010
+    volumes:
+      - ./benchmarks/results:/workspace/benchmarks/results
+    networks:
+      - benchmark-network
+    command: ["bash", "-lc", "sleep infinity"]
+
+  netem:
+    build:
+      context: .
+      dockerfile: docker/netem.Dockerfile
+    profiles: ["netem"]
+    container_name: benchmark-netem
+    cap_add:
+      - NET_ADMIN
+    network_mode: "service:${TARGET_SERVICE:-benchmark-runner}"
+    environment:
+      NETEM_DEV: eth0
+      NETEM_DELAY_MS: "${NETEM_DELAY_MS:-0}"
+      NETEM_JITTER_MS: "${NETEM_JITTER_MS:-0}"
+      NETEM_LOSS_PERCENT: "${NETEM_LOSS_PERCENT:-0}"
+      NETEM_RATE: "${NETEM_RATE:-}"
+    command: ["apply"]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    profiles: ["observability"]
+    container_name: benchmark-cadvisor
+    privileged: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - benchmark-network
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    profiles: ["observability"]
+    container_name: benchmark-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - benchmark_prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+    depends_on:
+      - cadvisor
+    networks:
+      - benchmark-network
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    profiles: ["observability"]
+    container_name: benchmark-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - benchmark_grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - benchmark-network
+
+volumes:
+  benchmark_postgres_data:
+  benchmark_redis_data:
+  benchmark_prometheus_data:
+  benchmark_grafana_data:
+
+networks:
+  benchmark-network:
+    driver: bridge

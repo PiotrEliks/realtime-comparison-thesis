@@ -1,6 +1,7 @@
 // ─── Types ────────────────────────────────────────────────────────────────────
 export * from './types/metrics';
 export * from './types/adapter';
+export * from './types/Kanban';
 
 // ─── Dashboard Shell ──────────────────────────────────────────────────────────
 export { DashboardShell } from './components/dashboard/DashboardShell';
