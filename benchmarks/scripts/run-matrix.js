@@ -109,9 +109,14 @@ function parseArgs(argv) {
     limit: 0,
   };
 
-  for (let i = 0; i < argv.length; i += 1) {
-    const a = argv[i];
-    const n = argv[i + 1];
+  const firstFlagIndex = argv.findIndex(arg => arg.startsWith('--'));
+  const positional = firstFlagIndex >= 0 ? argv.slice(0, firstFlagIndex) : argv;
+  const flagged = firstFlagIndex >= 0 ? argv.slice(firstFlagIndex) : [];
+  if (positional.length > 0) applyPositionalArgs(out, positional);
+
+  for (let i = 0; i < flagged.length; i += 1) {
+    const a = flagged[i];
+    const n = flagged[i + 1];
     if (a === '--app') out.app = n, i += 1;
     else if (a === '--apps') out.app = n, i += 1;
     else if (a === '--transports') out.transports = csv(n), i += 1;
@@ -133,6 +138,17 @@ function parseArgs(argv) {
   }
 
   return out;
+}
+
+function applyPositionalArgs(out, argv) {
+  const [app, transports, clients, repeats, networks, warmupMs, durationMs] = argv;
+  if (app) out.app = app;
+  if (transports) out.transports = csv(transports);
+  if (clients) out.clients = csv(clients).map(Number);
+  if (repeats) out.repeats = Number(repeats);
+  if (networks) out.networks = parseNetworks(networks);
+  if (warmupMs) out.warmupMs = Number(warmupMs);
+  if (durationMs) out.durationMs = Number(durationMs);
 }
 
 function buildPlan() {

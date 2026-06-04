@@ -298,7 +298,7 @@ function parseBytes(value) {
 
 function applyNetem(spec) {
   const env = Object.fromEntries(spec.split(',').map(part => part.split('=')));
-  const composeArgs = ['compose', '-f', 'docker-compose.benchmark.yml', '--profile', 'netem', 'run', '--rm'];
+  const composeArgs = ['compose', '-f', 'docker-compose.benchmark.yml', '--profile', 'runner', '--profile', 'netem', 'run', '--rm'];
   const full = [
     ...composeArgs,
     '-e', 'TARGET_SERVICE=benchmark-runner',
@@ -317,7 +317,7 @@ function applyNetem(spec) {
 function clearNetem() {
   run('docker', [
     'compose', '-f', 'docker-compose.benchmark.yml',
-    '--profile', 'netem', 'run', '--rm',
+    '--profile', 'runner', '--profile', 'netem', 'run', '--rm',
     '-e', 'TARGET_SERVICE=benchmark-runner',
     'netem', 'clear',
   ], { stdio: 'inherit' });

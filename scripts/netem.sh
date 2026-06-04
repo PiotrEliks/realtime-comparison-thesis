@@ -8,6 +8,20 @@ cleanup() {
   tc qdisc del dev "$DEV" root 2>/dev/null || true
 }
 
+explain_netem_failure() {
+  local message="$1"
+  if echo "$message" | grep -qi "qdisc kind is unknown"; then
+    cat >&2 <<EOF
+netem is not available in this Docker/WSL kernel.
+The tc tool is installed and NET_ADMIN works, but the kernel does not expose the sch_netem qdisc.
+Run baseline tests here, or run degraded-network tests inside a Linux/WSL environment with sch_netem support.
+Original tc error: $message
+EOF
+  else
+    echo "$message" >&2
+  fi
+}
+
 case "$MODE" in
   clear)
     cleanup
@@ -46,7 +60,10 @@ case "$MODE" in
       exit 0
     fi
 
-    tc qdisc add dev "$DEV" root netem "${args[@]}"
+    if ! output="$(tc qdisc add dev "$DEV" root netem "${args[@]}" 2>&1)"; then
+      explain_netem_failure "$output"
+      exit 1
+    fi
     echo "netem applied on $DEV: ${args[*]}"
     tc qdisc show dev "$DEV"
     ;;
@@ -55,4 +72,3 @@ case "$MODE" in
     exit 2
     ;;
 esac
-

@@ -31,3 +31,4 @@ yarn-error.log*
 benchmarks/results/*.csv
 benchmarks/results/*.json
 !benchmarks/results/.gitkeep
+benchmarks/results

@@ -253,7 +253,7 @@ function parseBytes(value) {
 function applyNetem(spec) {
   const env = Object.fromEntries(spec.split(',').map(part => part.split('=')));
   run('docker', [
-    ...COMPOSE, '--profile', 'netem', 'run', '--rm',
+    ...COMPOSE, '--profile', 'runner', '--profile', 'netem', 'run', '--rm',
     '-e', 'TARGET_SERVICE=benchmark-runner',
     ...Object.entries({
       NETEM_DELAY_MS: env.delay || env.delayMs || '',
@@ -266,5 +266,5 @@ function applyNetem(spec) {
 }
 
 function clearNetem() {
-  run('docker', [...COMPOSE, '--profile', 'netem', 'run', '--rm', '-e', 'TARGET_SERVICE=benchmark-runner', 'netem', 'clear'], { stdio: 'inherit' });
+  run('docker', [...COMPOSE, '--profile', 'runner', '--profile', 'netem', 'run', '--rm', '-e', 'TARGET_SERVICE=benchmark-runner', 'netem', 'clear'], { stdio: 'inherit' });
 }
